@@ -1,0 +1,18 @@
+//DSRP015V JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),            
+//            MSGCLASS=X,CLASS=A,NOTIFY=DSRP015             
+//STEP010  EXEC PGM=IDCAMS                                  
+//SYSPRINT DD SYSOUT=*                                      
+//SYSIN    DD *                                             
+ /* IDCAMS COMMAND */                                       
+ DELETE DSRP015.VSAM.STUD1 CLUSTER                          
+                                                            
+ DEFINE CLUSTER (NAME(DSRP015.VSAM.STUD1) -                 
+        TRACKS(1 1) -                                       
+        KEYS(4 0) -                                         
+        RECORDSIZE(80 80) -                                 
+        INDEXED -                                           
+        ) -                                                 
+        DATA (NAME(DSRP015.VSAM.STUD1.DATA) -               
+        ) -                                              
+        INDEX (NAME(DSRP015.VSAM.STUD1.INDEX) -          
+        )                                                

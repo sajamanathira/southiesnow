@@ -1,0 +1,54 @@
+Hands On Practice for VSAM =
+
+1) Rename the PS Files used for Loading Data into your VSAM Files
+   USERID.VSAM.*	to USERID.VSAM.EMPFILE1, EMPFILE2, etc.
+2) Rename the PS File used for Downloading Data from VSAM Files
+   USERID.VSAM.*	to USERID.VSAM.OUT1, OUT2, etc.
+3) Retain your PDS - USERID.VSAM.JCLLIB
+4) Delete all other Files that exist under USERID.VSAM.*
+   D = Delete all PS Files
+   DELETE = Delete all VSAM Files
+5) Try out All the JCLs that we have created so far to do the following -
+   - ESDS
+	a. Create a ESDS
+	b. Load Records into ESDS
+	c. Download Records from ESDS to Output File or SPOOL using
+	   SKIP, COUNT, FROMADDRESS, TOADDRESS
+   - RRDS
+	a. Create a RRDS
+	b. Load Records into RRDS
+	c. Download Records from RRDS to Output File or SPOOL using
+	   SKIP, COUNT, FROMNUMBER, TONUMBER
+   - KSDS
+	a. Create a KSDS
+	b. Load Records into KSDS
+	c. Download Records from KSDS to Output File or SPOOL using
+	   SKIP, COUNT, FROMKEY, TOKEY
+	d. Use REUSE and/or REPLACE to see its effects
+   - KSDS with AIX
+	a. Define the Alternate Index
+	b. BLDINDEX to Load Records
+	c. Define the PATH
+
+6) Try the LISTCAT Command
+7) Try the VERIFY Command
+8) Try the ALTER Command
+
+Try the following as a VSAM Assignment:
+Write a single JCL to create a Employee Master VSAM KSDS with 2 Alternate Index
+on Location and Technology. The Steps involved are -
+1) Create the Base Cluster
+2) Arrange Records from Input File using Temporary File
+3) Load Records into Base Cluster
+4) Create the AIX on Location
+5) Load Records into Location AIX
+6) Create connection between Base Cluster and Location AIX
+7) Create the AIX on Technology
+8) Load Records into Technology AIX
+9) Create connection between Base Cluster and Technology AIX
+
+Run the above JCL so that -
+a. All the 9 Steps in one execution to achieve the objective
+b. If any Step Abends, try to RESTART the JCL to achieve the objective
+======================================================================
+

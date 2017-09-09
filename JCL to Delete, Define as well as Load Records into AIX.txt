@@ -1,0 +1,25 @@
+//STEP010  EXEC PGM=IDCAMS                                  
+//SYSPRINT DD SYSOUT=*                                      
+//SYSIN    DD *                                             
+ /* IDCAMS COMMAND */                                       
+ DELETE USERID.VSAM.EMPLOYEE.LOCAIX AIX PURGE              
+ SET MAXCC=0                                                
+ DEFINE ALTERNATEINDEX (NAME(USERID.VSAM.EMPLOYEE.LOCAIX) -
+        RELATE(USERID.VSAM.EMPLOYEE) -                     
+        TRACKS(1 1) -                                       
+        RECORDSIZE(23 38) -                                 
+        KEYS(3 20) -                                        
+        NONUNIQUEKEY -                                      
+        ) -                                                 
+        DATA (NAME(USERID.VSAM.EMPLOYEE.LOCAIX.DATA) -     
+        ) -                                                 
+        INDEX (NAME(USERID.VSAM.EMPLOYEE.LOCAIX.INDEX) -   
+        )                                                   
+//STEP020  EXEC PGM=IDCAMS                             
+//SYSPRINT DD SYSOUT=*                                 
+//BASE0    DD DSN=USERID.VSAM.EMPLOYEE,DISP=SHR       
+//AIX1     DD DSN=USERID.VSAM.EMPLOYEE.LOCAIX,DISP=SHR
+//SYSIN    DD *                                        
+ BLDINDEX INFILE(BASE0) -                              
+         OUTFILE(AIX1) 
+/*            
