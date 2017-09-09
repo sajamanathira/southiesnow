@@ -1,0 +1,113 @@
+IDENTIFICATION DIVISION.                        
+PROGRAM-ID. P18AP03.                            
+DATA DIVISION.                                  
+WORKING-STORAGE SECTION.                        
+01 WS-CA    PIC X(01).                          
+01 WS-RESP-CODE     PIC S9(08) COMP VALUE ZERO. 
+01 WS-EARN          PIC ZZ,ZZ9.99 VALUE ZERO.   
+01 WS-DEDN          PIC ZZ,ZZ9.99 VALUE ZERO.   
+01 WS-SAL           PIC 9(05)V99  VALUE ZERO.   
+01 WS-SAL-O        PIC ZZ,ZZ9.99 VALUE ZERO.    
+01 WS-DATE-TIME    PIC S9(15) COMP-3 VALUE ZERO.
+       COPY EMPREC.                             
+       COPY P18AS03.                            
+       COPY DFHAID.                             
+LINKAGE SECTION.                                
+01 DFHCOMMAREA     PIC X(01).                   
+PROCEDURE DIVISION.                         
+MAIN-PARA.                                  
+      IF EIBCALEN =  ZERO                   
+        PERFORM FIRST-PARA                  
+      ELSE                                  
+        PERFORM NEXT-PARA.                  
+END-PARA.                                   
+        EXEC CICS RETURN                    
+            TRANSID('P18C')                 
+            COMMAREA(WS-CA)                 
+        END-EXEC.                           
+FIRST-PARA.                                 
+      MOVE LOW-VALUES TO EMPMAPO            
+      PERFORM SEND-PARA.                    
+SEND-PARA.                                  
+        PERFORM DATE-TIME-PARA.             
+        EXEC CICS SEND                      
+              MAP('EMPMAP')                                 
+              MAPSET('P18AS03')                             
+              FROM (EMPMAPO)                                
+              ERASE                                         
+          END-EXEC.                                         
+ NEXT-PARA.                                                 
+          EVALUATE EIBAID                                   
+              WHEN DFHPF3                                   
+                 EXEC CICS XCTL                             
+                     PROGRAM('P18AP02')                     
+                 END-EXEC                                   
+              WHEN DFHENTER                                 
+                  PERFORM PROCESS-PARA                      
+              WHEN OTHER                                    
+                  MOVE 'INVALID KEY PRESSED' TO MESSAGEO    
+              END-EVALUATE                                  
+              PERFORM SEND-PARA.                            
+PROCESS-PARA.                                                
+         PERFORM RECEIVE-MAP                                  
+         IF ID1L = ZERO                                       
+            MOVE 'PLEASE ENTER EMPLOYEE ID'  TO MESSAGEO      
+         ELSE                                                 
+              IF ID1I = SPACES                                
+                MOVE 'EMPLOYE-ID CANNOT BE BLANK' TO MESSAGEO 
+              ELSE                                            
+                PERFORM READ-EMPLOYEE                         
+              END-IF                                          
+            END-IF.                                           
+ READ-EMPLOYEE.                                               
+       EXEC CICS READ                                         
+         FILE('P18AFILE')                                     
+         RIDFLD(ID1I)                                         
+         INTO(EMPLOYEE-RECORD)                                
+         RESP(WS-RESP-CODE)                                   
+    END-EXEC.                                           
+    EVALUATE WS-RESP-CODE                               
+      WHEN DFHRESP(NORMAL)                              
+         MOVE EMP-NAME  TO NAME1O                       
+         MOVE EMP-TECH  TO TECH1O                       
+         MOVE EMP-LOC   TO LOC1O                        
+         MOVE EMP-EARN  TO WS-EARN                      
+         PERFORM MOVE-DOB                               
+            MOVE WS-EARN TO EARN1O                      
+              MOVE EMP-DEDN TO WS-DEDN                  
+              MOVE WS-DEDN TO DEDN1O                    
+           COMPUTE WS-SAL = EMP-EARN -  EMP-DEDN        
+            MOVE WS-SAL TO WS-SAL-O                     
+            MOVE WS-SAL-O TO SAL1O                      
+            MOVE 'DETAILS FOUND' TO MESSAGEO            
+       WHEN DFHRESP(NOTFND)                             
+         MOVE SPACES    TO     NAME1O, DOB1O,           
+                             TECH1O, LOC1O,              
+                             EARN1O, DEDN1O, SAL1O       
+           MOVE 'EMPLOYEE NOT FOUND     ' TO MESSAGEO    
+         WHEN OTHER                                      
+            MOVE 'ERROR IN ACCESSING FILE ' TO MESSAGEO  
+           MOVE SPACES    TO     NAME1O, DOB1O,          
+                             TECH1O, LOC1O,              
+                             EARN1O, DEDN1O, SAL1O       
+           END-EVALUATE.                                 
+ MOVE-DOB.                                               
+       MOVE EMP-DOB TO DOB1O.                            
+*      MOVE EMP-DOB TO WS-OUT-DATE                       
+ RECEIVE-MAP.                                            
+        EXEC CICS RECEIVE                                
+            MAP('EMPMAP')                                
+            MAPSET('P18AS03')                            
+            INTO(EMPMAPI)                                
+       END-EXEC.                
+DATE-TIME-PARA.                 
+      EXEC CICS ASKTIME         
+         ABSTIME(WS-DATE-TIME)  
+      END-EXEC.                 
+      EXEC CICS FORMATTIME      
+          ABSTIME(WS-DATE-TIME) 
+         DDMMYYYY(SYSDATEO)     
+         DATESEP                
+         TIME(SYSTIMEO)         
+         TIMESEP                
+         END-EXEC.              

@@ -1,0 +1,79 @@
+    PERFORM READ-EMPLOYEE THRU READ-X
+
+READ-EMPLOYEE SECTION.
+    EXEC CICS HANDLE CONDITION
+	NOTFND(NOTFND-PARA)
+	ERROR(ERROR-PARA)
+    END-EXEC
+    EXEC CICS READ
+	FILE
+	RIDFLD
+	INTO
+    END-EXEC
+    PERFORM MOVE-PARA
+    MOVE 'Y' TO WS-REC-FLAG
+    GO TO RESET-PARA.
+NOTFND-PARA.
+    MOVE 'N' TO WS-REC-FLAG.
+    MOVE SPACES TO
+    GO TO RESET-PARA.
+ERROR-PARA.
+    MOVE 'T' TO WS-ERROR-FLAG.
+RESET-PARA.
+    EXEC CICS HANDLE CONDITION
+	NOTFND
+    END-EXEC.
+READ-X.
+    EXIT.
+===========================================================================
+To create a new TSQ, write the first record.
+CECI WRITEQ TS QUEUE(PnnTSQA) FROM(&REC)
+
+Multiple executions of WRITEQ will append Records to TSQ
+
+To read a record from existing Queue randomly
+CECI READQ TS QUEUE(PnnTSQA) INTO(&REC) ITEM(n)
+	where n = No. of record to read
+
+To read a record from existing Queue sequentially
+CECI READQ TS QUEUE(PnnTSQA) INTO(&REC) NEXT
+
+To update a record in an existing TSQ, execute the following 2 commands
+CECI READQ TS QUEUE(PnnTSQA) INTO(&REC) ITEM(n)
+	where n = No. of record to read
+
+Change the contents of the &REC variable
+CECI WRITEQ TS QUEUE(PnnTSQA) FROM(&REC) ITEM(n) REWRITE
+	where n = No. of record to be updated
+
+To Delete the Queue,
+CECI DELETEQ TS QUEUE(PnnTSQA)
+
+Use CICS supplied Transaction CEBR to view contents of your TSQ
+CEBR PnnTSQA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

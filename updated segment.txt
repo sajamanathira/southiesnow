@@ -1,0 +1,33 @@
+Send Detail Map
+    Get the Date & Time
+    Send the Detail Map
+Process Detail Para
+    Evaluate EIBAID
+    When PF2
+       if PROCESS-ADD
+          Perform Add Para
+       ELSE
+          Move 'PF2 not enabled' to MSG2O
+    When PF3
+       SET PROCESS-KEY TO TRUE    (Move '1' to WS-CA)
+    When PF4
+       if PROCESS-UPD-DEL
+          Perform Update Para
+       ELSE
+          Move 'PF4 not enabled' to MSG2O
+    When PF5
+       if PROCESS-UPD-DEL
+          Perform Delete Para
+       ELSE
+          Move 'PF5 not enabled' to MSG2O
+    When Other
+       Move 'Invalid Key Pressed' to MSG2O
+Delete Para
+    DELETE FILE('PnnAFILE') RIDFLD(WS-EMP-ID)
+    If Normal
+    Move 'Delete Successful' to MSG1O
+    Else
+    UNLOCK FILE('PnnAFILE')
+    Move 'Delete not Successful' to MSG1O
+    end if
+    SET PROCESS-KEY TO TRUE      (Move '1' to WS-CA)

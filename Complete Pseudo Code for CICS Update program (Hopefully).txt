@@ -1,0 +1,142 @@
+WORKING-STORAGE SECTION.
+01  WS-CA.
+    03  WS-PROCESS-FLAG   PIC X(01) VALUE SPACES.
+    88  PROCESS-KEY         VALUE '1'.
+    88  PROCESS-ADD         VALUE '2'.
+    88  PROCESS-UPD-DEL     VALUE '3'.
+    88  PROCESS-DET         VALUE '2', '3'.
+    03  WS-EMP-ID PIC X(05) VALUE SPACES.
+    COPY PnnAS04.
+    COPY DFHAID.
+    COPY DFHBMSCA.
+01  MASTER-RECORD.
+LINKAGE SECTION.
+01  DFHCOMMAREA       PIC X(06).
+PROCEDURE DIVISION.
+MAIN-PARA.
+    IF EIBCALEN = ZERO
+    PERFORM FIRST-PARA
+    ELSE
+    MOVE DFHCOMMAREA TO WS-CA
+    PERFORM NEXT-PARA THRU NEXT-PARA-X
+    END-IF.
+END-PARA.
+    RETURN TRANSID('PnnD') COMMAREA(WS-CA)
+FIRST-PARA
+    Initialize the Symbolic Map
+    PERFORM SEND-FIRST-MAP.
+SEND-FIRST-MAP
+    Get the Date & Time
+    Send the Key Map
+    SET PROCESS-KEY TO TRUE   (Move '1' to WS-PROCESS-FLAG)
+NEXT-PARA.
+    EVALUATE TRUE
+    WHEN PROCESS-KEY
+       Perform Key Para
+    WHEN PROCESS-DET
+       Perform Detail Para
+SEND-PARA.
+    Evaluate TRUE
+    When PROCESS-KEY
+       Send Key Map
+    When PROCESS-DET
+       Send Detail Map
+NEXT-PARA-X.
+    EXIT.
+Key Para
+    Evaluate EIBAID
+    When Enter
+       Perform Process Key map
+    When PF3
+       XCTL to Menu Program
+    When Other
+       Move 'Invalid Key Pressed' to MSG1O
+Process Key Map
+    Receive Key Map
+    IF EMPID1 is not entered
+    Move 'Enter an Emp ID' to MSG1O
+    Else
+    Perform Read Employee
+Read Employee.
+    MOVE EMPID1I TO WS-EMP-ID
+    READ FIILE('PnnAFILE') RIDFLD(WS-EMP-ID) INTO(MASTER-RECORD)
+    If NORMAL
+    Move Employee Details to Symbolic Map Variables
+    SET PROCESS-UPD-DEL TO TRUE   (Move '3' to WS-PROCESS-FLAG)
+    Move 'Update / Delete' to MODEO
+    Move DFHBMDAR to LABEL1A
+    Move DFHBMPRO to LABEL2A
+    If NOTFND
+    Move Spaces to Symbolic Map Variables
+    SET PROCESS-ADD TO TRUE       (Move '2' to WS-PROCESS-FLAG)
+    Move 'Add Employee' to MODEO
+    Move DFHBMPRO to LABEL1A
+    Move DFHBMDAR to LABEL2A
+Send Detail Map
+    Get the Date & Time
+    Send the Detail Map
+Detail Para
+    Evaluate EIBAID
+    When PF2
+       if PROCESS-ADD     (WS-PROCESS-FLAG = '2')
+          Perform Add Para
+       ELSE
+          Move 'PF2 not enabled' to MSG2O
+    When PF3
+       SET PROCESS-KEY TO TRUE    (Move '1' to WS-PROCESS-FLAG)
+    When PF4
+       if PROCESS-UPD-DEL     (WS-PROCESS-FLAG = '3')
+          Perform Update Para
+       ELSE
+          Move 'PF4 not enabled' to MSG2O
+    When PF5
+       if PROCESS-UPD-DEL     (WS-PROCESS-FLAG = '3')
+          Perform Delete Para
+       ELSE
+          Move 'PF5 not enabled' to MSG2O
+    When Other
+       Move 'Invalid Key Pressed' to MSG2O
+Delete Para
+    DELETE FILE('PnnAFILE') RIDFLD(WS-EMP-ID)
+    If Normal
+    Move 'Delete Successful' to MSG1O
+    Else
+    UNLOCK FILE('PnnAFILE')
+    Move 'Delete not Successful' to MSG1O
+    end if
+    SET PROCESS-KEY TO TRUE      (Move '1' to WS-PROCESS-FLAG)
+    MOVE WS-EMP-ID TO EMPID1O
+Add Para
+    Receive Detail Map
+    Validate the Fields
+    If Valid Data
+    Move Fields from Symbolic Map to Master Record
+    Perform Write Para
+Write Para
+    WRITE FILE('PnnAFILE') RIDFLD(WS-EMP-ID) FROM (MASTER-RECORD)
+    If Normal
+    Move 'Add Successful' to MSG1O
+    Else
+    Move 'Add not Successful' to MSG1O
+    end if
+    SET PROCESS-KEY TO TRUE      (Move '1' to WS-PROCESS-FLAG)
+    MOVE WS-EMP-ID TO EMPID1O
+Update Para
+    Receive Detail Map
+    Validate the Fields
+    If Valid Data
+    Move Fields from Symbolic Map to Master Record
+    Perform ReWrite Para
+ReWrite Para
+    READ FILE('PnnAFILE') RIDFLD(WS-EMP-ID) INTO(MASTER-RECORD) UPDATE
+    If Normal
+    WRITE FILE('PnnAFILE') RIDFLD(WS-EMP-ID) FROM (MASTER-RECORD)
+    If Normal
+       Move 'Update Successful' to MSG1O
+    Else
+       Move 'Update not Successful' to MSG1O
+        end if
+    SET PROCESS-KEY TO TRUE      (Move '1' to WS-PROCESS-FLAG)
+    MOVE WS-EMP-ID TO EMPID1O
+Validate Para
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

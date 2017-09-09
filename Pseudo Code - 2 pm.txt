@@ -1,0 +1,67 @@
+WORKING-STORAGE SECTION.
+01  WS-CA      PIC X(01) VALUE SPACES.
+    88  PROCESS-KEY         VALUE '1'.
+    88  PROCESS-ADD         VALUE '2'.
+    88  PROCESS-UPD-DEL         VALUE '3'.
+    88  PROCESS-DET         VALUE '2', '3'.
+LINKAGE SECTION.
+01  DFHCOMMAREA       PIC X(01).
+PROCEDURE DIVISION.
+MAIN-PARA.
+    IF EIBCALEN = ZERO
+    PERFORM FIRST-PARA
+    ELSE
+    MOVE DFHCOMMAREA TO WS-CA
+    PERFORM NEXT-PARA THRU NEXT-PARA-X
+    END-IF.
+END-PARA.
+    RETURN TRANSID('PnnD') COMMAREA(WS-CA)
+FIRST-PARA
+    Initialize the Symbolic Map
+    PERFORM SEND-FIRST-MAP.
+SEND-FIRST-MAP
+    Get the Date & Time
+    Send the Key Map
+    SET PROCESS-KEY TO TRUE   (Move '1' to WS-CA)
+NEXT-PARA.
+    EVALUATE TRUE
+    WHEN PROCESS-KEY
+       Perform Key Para
+    WHEN PROCESS-DET
+       Perform Detail Para
+SEND-PARA.
+    Evaluate TRUE
+    When PROCESS-KEY
+       Send Key Map
+    When PROCESS-DET
+       Send Detail Map
+NEXT-PARA-X.
+    EXIT.
+Key Para
+    Evaluate EIBAID
+    When Enter
+       Perform Process Key map
+    When PF3
+       XCTL to Menu Program
+    When Other
+       Move 'Invalid Key Pressed' to MSG1O
+Process Key Map
+    Receive Key Map
+    IF Emp ID not entered
+    +Move 'Enter an Emp ID' to MSG1O
+    Else
+    Perform Read Employee
+Read Employee.
+    Read File('PnnAFILE') RIDFLD(EMPID1I) INTO(MASTER-RECORD)
+    If NORMAL
+    Move Employee Details to Symbolic Map Variables
+    SET PROCESS-UPD-DEL TO TRUE   (Move '3' to WS-CA)
+    Move 'Update / Delete' to MODEO
+    Move DFHBMDAR to LABEL1A
+    Move DFHBMPRO to LABEL2A
+    If NOTFND
+    Move Spaces to Symbolic Map Variables
+    SET PROCESS-ADD TO TRUE       (Move '2' to WS-CA)
+    Move 'Add Employee' to MODEO
+    Move DFHBMPRO to LABEL1A
+    Move DFHBMDAR to LABEL2A

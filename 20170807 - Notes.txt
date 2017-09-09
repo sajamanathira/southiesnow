@@ -1,0 +1,92 @@
+First Map = Key Map
+has only Employee ID on the Screen
+
+If Employee ID has been entered, Program will Display the
+Detail Map (similar to Inquiry Map) except for following -
+1) Emp ID is PROT
+2) All other Fields are UNPROT
+3) If Employee ID exists in the Employee Master
+   Display the Employee Details
+   PF2=ADD is not Displayed; PF2 is not a valid PF Key
+   User can Update the Employee Details or Delete the Employee
+   PF4 and PF5 are Valid
+4) If Employee ID doesn't exist in the Employee Master
+   Display a Blank Screen where User can Enter the Details
+   PF2=ADD is Displayed; PF2 is a valid PF Key
+   PF4=UPDATE; PF5=DELETE is not Displayed
+   PF4 and PF5 are both not Valid PF Keys
+5) For Add & Update you need to validate the individual Fields
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+PF2=ADD; PF3=KEYMAP; PF4=UPDATE;PF5=DELETE
+==============================================================
+CECI READ FILE(PnnAFILE) RIDFLD(&KEY) INTO(&REC)
+
+CECI WRITE FILE(PnnAFILE) RIDFLD(&KEY) FROM(&REC)
+
+where &KEY of Len=5 and &REC of Len=50
+++++++++++++++++++++++++++++++++++++++++
+For Reading a Record =
+    MOVE WS-KEY TO EMP-ID
+    EXEC CICS READ
+	FILE('PnnAFILE')
+	RIDFLD(EMP-ID)
+	INTO(MASTER-RECORD)
+    END-EXEC
+Response = NORMAL / NOTFND
+++++
+For Writing a Record =
+    MOVE WS-KEY TO EMP-ID
+    MOVE Employee Details to Master Record Fields
+    EXEC CICS WRITE
+	FILE('PnnAFILE')
+	RIDFLD(EMP-ID)
+	FROM(MASTER-RECORD)
+    END-EXEC
+Response = NORMAL / DUPREC
+++++++++++++++++++++++++++
+For Updating a Record =
+    MOVE WS-KEY TO EMP-ID
+    EXEC CICS READ
+	FILE('PnnAFILE')
+	RIDFLD(EMP-ID)
+	INTO(MASTER-RECORD)
+	UPDATE
+    END-EXEC
+Response = NORMAL / NOTFND
+    MOVE New Values to Detail Field
+    EXEC CICS REWRITE
+	FILE('PnnAFILE')
+	FROM(MASTER-RECORD)
+    END-EXEC
+Response = NORMAL / INVREQ
+If you don't want to Update the Record, issue the following
+    EXEC CICS UNLOCK
+	FILE('PnnAFILE')
+    END-EXEC
+++++++++++++++++++++++++++++
+For Deleting a Record =
+1] Read a Record for Update before Delete
+    MOVE WS-KEY TO EMP-ID
+    EXEC CICS READ
+	FILE('PnnAFILE')
+	RIDFLD(EMP-ID)
+	INTO(MASTER-RECORD)
+	UPDATE
+    END-EXEC
+Response = NORMAL / NOTFND
+    MOVE New Values to Detail Field
+    EXEC CICS DELETE
+	FILE('PnnAFILE')
+    END-EXEC
+Response = NORMAL / INVREQ
+
+2) Delete a Record directly with RIDFLD
+    MOVE New Values to Detail Field
+    EXEC CICS DELETE
+	FILE('PnnAFILE')
+	RIDFLD(EMP-ID)
+    END-EXEC
+Response = NORMAL / NOTFND
++++++++++++++++++++++++++++++++++++++++++++
