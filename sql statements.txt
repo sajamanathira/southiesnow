@@ -1,0 +1,42 @@
+  DROP   TABLE T01_EMPLOYEE_TABLE;  
+  COMMIT;                           
+  CREATE TABLE Tnn_EMPLOYEE_TABLE          
+  (EMP_ID        CHAR(5),       
+   EMP_NAME      CHAR(15),      
+   EMP_LOC       CHAR(3),       
+   EMP_DOB       DATE,          
+   EMP_TECH      CHAR(5),       
+   EMP_EARN      DECIMAL(7,2),  
+   EMP_DEDN      DECIMAL(7,2))  
+   IN PATNIDB1.PATNITS1; 
+=========================
+  INSERT INTO T01_EMPLOYEE_TABLE                         
+   (EMP_ID, EMP_NAME, EMP_LOC, EMP_DOB, EMP_TECH,
+    EMP_EARN, EMP_DEDN) 
+   VALUES('10001', 'EMP NAME - 101', 'PUN',
+    '1990-01-01', 'M/F', 10000.00, 1000.00);
+=================================================
+  SELECT * FROM T01_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE '__N';            
+--                                      
+  SELECT * FROM T01_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE 'C%';
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  WHERE EMP_LOC IN ('CHN', 'PUN'); 
+--                                 
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  WHERE EMP_TECH IS NULL;          
+--                                 
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  ORDER BY EMP_LOC DESC,           
+           EMP_ID; 
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE
+  WHERE  NOT EMP_LOC = 'CHN';  
+--
+  SELECT DISTINCT EMP_LOC  FROM T01_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH FROM T01_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH, EMP_LOC
+   FROM T01_EMPLOYEE_TABLE;         
+--    

@@ -1,0 +1,21 @@
+DROP   TABLE T01_LOCATION_TABLE;                           
+  COMMIT;                                                
+  CREATE TABLE T01_LOCATION_TABLE                        
+   (LOC_ID        CHAR(3) NOT NULL PRIMARY KEY,
+    LOC_NAME      CHAR(15))
+    IN PATNIDB1.PATNITS1;                                
+  CREATE UNIQUE INDEX LOCIDX ON T01_LOCATION_TABLE(LOC_ID);
+--
+  DROP   TABLE T01_EMPLOYEE_TABLE;                             
+  COMMIT;                                                
+  CREATE TABLE T01_EMPLOYEE_TABLE                                 
+   (EMP_ID        CHAR(5) NOT NULL PRIMARY KEY,             
+    EMP_NAME      CHAR(15),                                 
+    EMP_LOC       CHAR(3),                                  
+    EMP_DOB       DATE,                                     
+    EMP_TECH      CHAR(5),                                  
+    EMP_EARN      DECIMAL(7,2),                             
+    EMP_DEDN      DECIMAL(7,2),                             
+    FOREIGN KEY(EMP_LOC) REFERENCES T01_LOCATION_TABLE(LOC_ID))
+    IN PATNIDB1.PATNITS1;
+  CREATE UNIQUE INDEX EMPIDX ON T01_EMPLOYEE_TABLE(EMP_ID);

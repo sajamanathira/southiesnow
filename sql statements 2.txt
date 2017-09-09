@@ -1,0 +1,77 @@
+  DROP   TABLE Tnn_EMPLOYEE_TABLE;  
+  COMMIT;                           
+  CREATE TABLE Tnn_EMPLOYEE_TABLE          
+  (EMP_ID        CHAR(5),       
+   EMP_NAME      CHAR(15),      
+   EMP_LOC       CHAR(3),       
+   EMP_DOB       DATE,          
+   EMP_TECH      CHAR(5),       
+   EMP_EARN      DECIMAL(7,2),  
+   EMP_DEDN      DECIMAL(7,2))  
+   IN PATNIDB1.PATNITS1; 
+=========================
+  INSERT INTO Tnn_EMPLOYEE_TABLE                         
+   (EMP_ID, EMP_NAME, EMP_LOC, EMP_DOB, EMP_TECH,
+    EMP_EARN, EMP_DEDN) 
+   VALUES('10001', 'EMP NAME - 101', 'PUN',
+    '1990-01-01', 'M/F', 10000.00, 1000.00);
+=================================================
+  SELECT * FROM TNN_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE '__N';            
+--                                      
+  SELECT * FROM TNN_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE 'C%';
+--
+  SELECT * FROM TNN_EMPLOYEE_TABLE 
+  WHERE EMP_LOC IN ('CHN', 'PUN'); 
+--                                 
+  SELECT * FROM TNN_EMPLOYEE_TABLE 
+  WHERE EMP_TECH IS NULL;          
+--                                 
+  SELECT * FROM TNN_EMPLOYEE_TABLE 
+  ORDER BY EMP_LOC DESC,           
+           EMP_ID; 
+--
+  SELECT * FROM TNN_EMPLOYEE_TABLE
+  WHERE  NOT EMP_LOC = 'CHN';  
+--
+  SELECT DISTINCT EMP_LOC  FROM TNN_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH FROM TNN_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH, EMP_LOC
+   FROM TNN_EMPLOYEE_TABLE;         
+--   
+  SELECT EMP_LOC, EMP_TECH, COUNT(*) AS TOTAL_ROWS 
+   FROM TNN_EMPLOYEE_TABLE                         
+   GROUP BY EMP_LOC, EMP_TECH;                     
+--                                                 
+  SELECT COUNT(*) AS TOTAL_ROWS                    
+   FROM TNN_EMPLOYEE_TABLE;                        
+-- 
+  SELECT MIN(EMP_EARN) AS MIN_EARN, 
+         MAX(EMP_EARN) AS MAX_EARN, 
+         MIN(EMP_DEDN) AS MIN_DEDN, 
+         MAX(EMP_DEDN) AS MAX_DEDN, 
+         SUM(EMP_EARN) AS TOT_EARN, 
+         SUM(EMP_DEDN) AS TOT_DEDN  
+  FROM TNN_EMPLOYEE_TABLE;          
+--
+  SELECT EMP_NAME, EMP_EARN, EMP_DEDN,       
+         EMP_EARN - EMP_DEDN AS TOTAL_SALARY 
+  FROM TNN_EMPLOYEE_TABLE;                   
+--
+  SELECT EMP_LOC, COUNT(*)              
+  FROM TNN_EMPLOYEE_TABLE               
+  GROUP BY EMP_LOC HAVING COUNT(*) < 4; 
+--
+  SELECT * FROM TNN_EMPLOYEE_TABLE;  
+  UPDATE TNN_EMPLOYEE_TABLE          
+    SET EMP_EARN = EMP_EARN + 1000,
+    EMP_DEDN = EMP_DEDN + 100
+   WHERE EMP_LOC = 'CHN';  
+  SELECT * FROM TNN_EMPLOYEE_TABLE;  
+--
+  SELECT * FROM TNN_EMPLOYEE_TABLE;  
+  DELETE FROM TNN_EMPLOYEE_TABLE          
+   WHERE EMP_ID = '10001';  
+  SELECT * FROM TNN_EMPLOYEE_TABLE;  
+--

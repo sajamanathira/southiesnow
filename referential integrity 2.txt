@@ -1,0 +1,27 @@
+DELETE FROM T01_EMPLOYEE_TABLE;                               
+  DELETE FROM T01_LOCATION_TABLE;                               
+  COMMIT;                                                       
+--
+  INSERT INTO T01_LOCATION_TABLE                                
+   VALUES('CHN', 'CHENNAI');                                    
+  INSERT INTO T01_LOCATION_TABLE                                
+   VALUES('PUN', 'PUNE');                                       
+--
+  SELECT * FROM T01_LOCATION_TABLE;                             
+  SELECT * FROM T01_EMPLOYEE_TABLE;                             
+--
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('10001', 'RAMESH SINGH  ', 'CHN', '1990-01-01', 'TEST'
+   0, 0);                                                       
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('20002', 'RAJESH KUMAR  ', 'CHN', '1990-02-02', 'TEST'
+   60000.00, 6000.00);                                          
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('30003', 'RAJESH SINHA  ', 'PUN', '1990-03-03', 'M/F',
+   60000.00, 6000.00);
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('40004', 'RAMESH YADAV  ', 'PUN', '1990-04-04', 'M/F',
+   60000.00, 6000.00);                                          
+--
+  SELECT * FROM T01_LOCATION_TABLE;                             
+  SELECT * FROM T01_EMPLOYEE_TABLE;

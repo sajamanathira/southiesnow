@@ -1,0 +1,9 @@
+SELECT EMPNO, LASTNAME,
+     CASE SUBSTR(WORKDEPT,1,1)
+       WHEN 'A' THEN 'Administration'
+       WHEN 'B' THEN 'Human Resources'
+       WHEN 'C' THEN 'Accounting'
+       WHEN 'D' THEN 'Design'
+       WHEN 'E' THEN 'Operations'
+     END
+     FROM EMPLOYEE;

@@ -1,0 +1,34 @@
+Cursor Program - 1 =
+To Accept the Location from the User & Print all Employees from Table
+belonging to that Location.
+
+WORKING-STORAGE SECTION.
+01  WS-LOC   PIC X(03) VALUE SPACES.
+    EXEC SQL
+    DECLARE EMP_CUR CURSOR FOR
+    SELECT EMP_ID, EMP_NAME, EMP_TECH, EMP_EARN, EMP_DEDN
+    FROM T01_EMPLOYEE_TABLE
+    WHERE    EMP_LOC = :WS-LOC
+    END-EXEC
+PROCEDURE DIVISION.
+MAIN-PARA.
+    ACCEPT WS-LOC
+    EXEC SQL
+    OPEN EMP_CUR
+    END-EXEC
+SQLCODE = 0 means Open Success
+
+    EXEC SQL
+    FETCH EMP_CUR INTO
+    :EMP-ID, :EMP-NAME, :EMP-TECH, :EMP-EARN, :EMP-DEDN
+    END-EXEC
+SQLCODE = 0   means Row Successfully fetched
+SQLCODE = 100 means No more Rows to Fetch
+
+    EXEC SQL
+    CLOSE EMP_CUR
+    END-EXEC
+SQLCODE = 0 means Close Success
+===========================================================
+Cursor Program - 2 =
+To Accept Multiple Locations from the User & Print all Employees from Table belonging to those individual Location.

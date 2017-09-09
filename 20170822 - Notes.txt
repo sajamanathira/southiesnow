@@ -1,0 +1,24 @@
+Any DB2 COBOL Program related Queries??
+Please get All your Errors resolved before Thursday.
+====================================================
+1) Create an Account Table with following Columns -
+- Account No = 9(5)	Primary Key
+- Customer Name = X(25)
+- Opening Date = Date
+- Account Bal = 9(8)v99
+- Account Status = A(1)
+2) Insert Rows into the Account Table
+3) Create a Transaction with following Columns -
+- Trans No = 9(5) = Primary Key
+- Trans Date = Date
+- Trans Amount = 9(8)V99
+- Trans Balance = 9(8)V99
+- Trans Type = X(1)
+- Account No 9(5)	Foreign Key
+4) Insert Rows into the Transaction Table
+Note = For Data, refer to Data Files from COBOL ReTest
+Queries = Write a SQL to print
+1) All Active Account Nos with the Count of Transactions
+2) All Active Account Nos with their Current Balance
+
+

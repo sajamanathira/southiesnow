@@ -1,0 +1,287 @@
+  DROP   TABLE T01_EMPLOYEE_TABLE;  
+  COMMIT;                           
+  CREATE TABLE Tnn_EMPLOYEE_TABLE          
+  (EMP_ID        CHAR(5),       
+   EMP_NAME      CHAR(15),      
+   EMP_LOC       CHAR(3),       
+   EMP_DOB       DATE,          
+   EMP_TECH      CHAR(5),       
+   EMP_EARN      DECIMAL(7,2),  
+   EMP_DEDN      DECIMAL(7,2))  
+   IN PATNIDB1.PATNITS1; 
+=========================
+  INSERT INTO T01_EMPLOYEE_TABLE                         
+   (EMP_ID, EMP_NAME, EMP_LOC, EMP_DOB, EMP_TECH,
+	EMP_EARN, EMP_DEDN) 
+   VALUES('10001', 'EMP NAME - 101', 'PUN',
+	'1990-01-01', 'M/F', 10000.00, 1000.00);
+=================================================
+  SELECT * FROM T01_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE '__N';            
+--                                      
+  SELECT * FROM T01_EMPLOYEE_TABLE      
+  WHERE  EMP_LOC LIKE 'C%';
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  WHERE EMP_LOC IN ('CHN', 'PUN'); 
+--                                 
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  WHERE EMP_TECH IS NULL;          
+--                                 
+  SELECT * FROM T01_EMPLOYEE_TABLE 
+  ORDER BY EMP_LOC DESC,           
+           EMP_ID; 
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE
+  WHERE  NOT EMP_LOC = 'CHN';  
+--
+  SELECT DISTINCT EMP_LOC  FROM T01_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH FROM T01_EMPLOYEE_TABLE;
+  SELECT DISTINCT EMP_TECH, EMP_LOC
+   FROM T01_EMPLOYEE_TABLE;         
+--   
+  SELECT EMP_LOC, EMP_TECH, COUNT(*) AS TOTAL_ROWS 
+   FROM T01_EMPLOYEE_TABLE                         
+   GROUP BY EMP_LOC, EMP_TECH;                     
+--                                                 
+  SELECT COUNT(*) AS TOTAL_ROWS                    
+   FROM T01_EMPLOYEE_TABLE;                        
+-- 
+  SELECT MIN(EMP_EARN) AS MIN_EARN, 
+         MAX(EMP_EARN) AS MAX_EARN, 
+         MIN(EMP_DEDN) AS MIN_DEDN, 
+         MAX(EMP_DEDN) AS MAX_DEDN, 
+         SUM(EMP_EARN) AS TOT_EARN, 
+         SUM(EMP_DEDN) AS TOT_DEDN  
+  FROM T01_EMPLOYEE_TABLE;          
+--
+  SELECT EMP_NAME, EMP_EARN, EMP_DEDN,       
+         EMP_EARN - EMP_DEDN AS TOTAL_SALARY 
+  FROM T01_EMPLOYEE_TABLE;                   
+--
+  SELECT EMP_LOC, COUNT(*)              
+  FROM T01_EMPLOYEE_TABLE               
+  GROUP BY EMP_LOC HAVING COUNT(*) < 4; 
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE;  
+  UPDATE T01_EMPLOYEE_TABLE          
+    SET EMP_EARN = EMP_EARN + 1000,
+	EMP_DEDN = EMP_DEDN + 100
+   WHERE EMP_LOC = 'CHN';  
+  SELECT * FROM T01_EMPLOYEE_TABLE;  
+--
+  SELECT * FROM T01_EMPLOYEE_TABLE;  
+  DELETE FROM T01_EMPLOYEE_TABLE          
+   WHERE EMP_ID = '10001';  
+  SELECT * FROM T01_EMPLOYEE_TABLE;  
+============================================
+Creating an Employee Table with a Primary Key
+  DROP   TABLE T01_EMPLOYEE_TABLE; 
+  COMMIT;                                                  CREATE TABLE T01_EMPLOYEE_TABLE  
+   (EMP_ID        CHAR(5) NOT NULL,
+    EMP_NAME      CHAR(15),        
+    EMP_LOC       CHAR(3),         
+    EMP_DOB       DATE,            
+    EMP_TECH      CHAR(5),         
+    EMP_EARN      DECIMAL(7,2),    
+    EMP_DEDN      DECIMAL(7,2),    
+    PRIMARY KEY(EMP_ID))           
+    IN PATNIDB1.PATNITS1;          
+  CREATE TABLE T01_EMPLOYEE_TABLE  
+   (EMP_ID        CHAR(5) NOT NULL PRIMARY KEY,
+    EMP_NAME      CHAR(15),        
+    EMP_LOC       CHAR(3),         
+    EMP_DOB       DATE,            
+    EMP_TECH      CHAR(5),         
+    EMP_EARN      DECIMAL(7,2),    
+    EMP_DEDN      DECIMAL(7,2))    
+    IN PATNIDB1.PATNITS1; 
+--
+  CREATE UNIQUE INDEX EMPIDX ON T01_EMPLOYEE_TABLE(EMP_ID);
+===========================================
+  CREATE TABLE T01_TEMP_TABLE
+  (C1	CHAR(5) NOT NULL,
+   C2	CHAR(10),
+   C3	DATE,
+   C4	CHAR(4) NOT NULL,
+   C5	DECIMAL(8,2),
+   PRIMARY KEY(C1, C4))
+   IN Database.Tablespace;
+  CREATE UNIQUE INDEX CIDX ON T01_TEMP_TABLE(C1, C4);
+=====================================================
+For getting the Current Date, Time & Timestamp -
+  SELECT CURRENT DATE AS CUR_DATE,              
+         CURRENT TIME AS CUR_TIME,              
+         CURRENT TIMESTAMP AS CUR_TS            
+  FROM SYSIBM.SYSDUMMY1;                                 ---------+---------+---------+---------+--------
+CUR_DATE    CUR_TIME  CUR_TS                    
+---------+---------+---------+---------+--------
+2017-08-14  16.16.10  2017-08-14-16.16.10.280088
+==================================================
+  DROP   TABLE T01_LOCATION_TABLE;                                 COMMIT;                                                
+  CREATE TABLE T01_LOCATION_TABLE                        
+   (LOC_ID        CHAR(3) NOT NULL PRIMARY KEY,
+    LOC_NAME      CHAR(15))
+    IN PATNIDB1.PATNITS1;                                
+  CREATE UNIQUE INDEX LOCIDX ON T01_LOCATION_TABLE(LOC_ID);
+--
+  DROP   TABLE T01_EMPLOYEE_TABLE;                                  COMMIT;                                                
+  CREATE TABLE T01_EMPLOYEE_TABLE                                    (EMP_ID        CHAR(5) NOT NULL PRIMARY KEY,             
+    EMP_NAME      CHAR(15),                                 
+    EMP_LOC       CHAR(3),                                  
+    EMP_DOB       DATE,                                     
+    EMP_TECH      CHAR(5),                                  
+    EMP_EARN      DECIMAL(7,2),                             
+    EMP_DEDN      DECIMAL(7,2),                             
+    FOREIGN KEY(EMP_LOC) REFERENCES T01_LOCATION_TABLE(LOC_ID))
+    IN PATNIDB1.PATNITS1;
+  CREATE UNIQUE INDEX EMPIDX ON T01_EMPLOYEE_TABLE(EMP_ID);
+===========================================================
+  DELETE FROM T01_EMPLOYEE_TABLE;                               
+  DELETE FROM T01_LOCATION_TABLE;                               
+  COMMIT;                                                       
+--
+  INSERT INTO T01_LOCATION_TABLE                                
+   VALUES('CHN', 'CHENNAI');                                    
+  INSERT INTO T01_LOCATION_TABLE                                
+   VALUES('PUN', 'PUNE');                                       
+--
+  SELECT * FROM T01_LOCATION_TABLE;                             
+  SELECT * FROM T01_EMPLOYEE_TABLE;                             
+--
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('10001', 'RAMESH SINGH  ', 'CHN', '1990-01-01', 'TEST'
+   0, 0);                                                       
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('20002', 'RAJESH KUMAR  ', 'CHN', '1990-02-02', 'TEST'
+   60000.00, 6000.00);                                          
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('30003', 'RAJESH SINHA  ', 'PUN', '1990-03-03', 'M/F',
+   60000.00, 6000.00);
+  INSERT INTO T01_EMPLOYEE_TABLE                                
+   VALUES('40004', 'RAMESH YADAV  ', 'PUN', '1990-04-04', 'M/F',
+   60000.00, 6000.00);                                          
+--
+  SELECT * FROM T01_LOCATION_TABLE;                             
+  SELECT * FROM T01_EMPLOYEE_TABLE;
+======================================
+Hands On Practice =
+1) Update Emp Loc in Employee Table from 'PUN' to 'MUM'
+2) Update Emp Loc in Employee Table from 'CHN' to 'PUN'
+3) Delete Row in Location Table where Loc ID = 'CHN'
+4) Delete Row in Location Table where Loc ID = 'PUN'
+=======================================================
+1] Referential Integrity with DELETE RESTRICT
+  DROP   TABLE T01_LOCATION_TABLE;                                 COMMIT;                                                
+  CREATE TABLE T01_LOCATION_TABLE                        
+   (LOC_ID        CHAR(3) NOT NULL PRIMARY KEY,
+    LOC_NAME      CHAR(15))
+    IN PATNIDB1.PATNITS1;                                
+  CREATE UNIQUE INDEX LOCIDX ON T01_LOCATION_TABLE(LOC_ID);
+--
+  DROP   TABLE T01_EMPLOYEE_TABLE;                                  COMMIT;                                                
+  CREATE TABLE T01_EMPLOYEE_TABLE                                    (EMP_ID        CHAR(5) NOT NULL PRIMARY KEY,             
+    EMP_NAME      CHAR(15),                                 
+    EMP_LOC       CHAR(3),                                  
+    EMP_DOB       DATE,                                     
+    EMP_TECH      CHAR(5),                                  
+    EMP_EARN      DECIMAL(7,2),                             
+    EMP_DEDN      DECIMAL(7,2),                             
+    FOREIGN KEY(EMP_LOC) REFERENCES T01_LOCATION_TABLE(LOC_ID)
+    ON DELETE RESTRICT)
+    - (default, prevents delete of Row from Location Table)
+    ON DELETE SET NULL)
+    - (sets the Foreign Key to Null for all Rows in Employee
+	Table belonging to that Loc Id)
+    ON DELETE CASCADE)
+    - (deletes All rows from Employee Table for that Loc ID
+	before deleting that Row from Location Table)
+    IN PATNIDB1.PATNITS1;
+  CREATE UNIQUE INDEX EMPIDX ON T01_EMPLOYEE_TABLE(EMP_ID);
+============================================================
+Hands On Practice =
+[A] With Referential Integrity = DELETE RESTRICT
+1) Create Location Table & Employee Table with Foreign Key
+2) Insert Standard Rows into Location & Employee Table
+3) Update Emp Loc in Employee Table from 'PUN' to 'MUM'
+4) Update Emp Loc in Employee Table from 'CHN' to 'PUN'
+5) Delete Row in Location Table where Loc ID = 'CHN'
+6) Delete Row in Location Table where Loc ID = 'PUN'
+
+[B] With Referential Integrity = DELETE SET NULL
+1) Create Location Table & Employee Table with Foreign Key
+2) Insert Standard Rows into Location & Employee Table
+3) Update Emp Loc in Employee Table from 'PUN' to 'MUM'
+4) Update Emp Loc in Employee Table from 'CHN' to 'PUN'
+5) Delete Row in Location Table where Loc ID = 'CHN'
+6) Delete Row in Location Table where Loc ID = 'PUN'
+
+[C] With Referential Integrity = DELETE CASCADE
+1) Create Location Table & Employee Table with Foreign Key
+2) Insert Standard Rows into Location & Employee Table
+3) Update Emp Loc in Employee Table from 'PUN' to 'MUM'
+4) Update Emp Loc in Employee Table from 'CHN' to 'PUN'
+5) Delete Row in Location Table where Loc ID = 'CHN'
+6) Delete Row in Location Table where Loc ID = 'PUN'
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                       
+
+
+
+
+
+
+

@@ -1,0 +1,86 @@
+  IDENTIFICATION DIVISION.                                     
+  PROGRAM-ID. PROG11.                                          
+  ENVIRONMENT DIVISION.                                        
+  INPUT-OUTPUT SECTION.                                        
+  FILE-CONTROL.                                                
+     SELECT REPORT-FILE ASSIGN TO REPFILE                      
+     FILE STATUS IS WS-REP-STAT.                               
+  DATA DIVISION.                                               
+  FILE SECTION.                                                
+  FD REPORT-FILE                                               
+      RECORD CONTAINS 80 CHARACTERS                            
+      RECORDING MODE IS F.                                     
+  01  REPORT-RECORD PIC X(80).                                 
+  WORKING-STORAGE SECTION.                                     
+     EXEC SQL                                                  
+       INCLUDE ACCOUNT                                         
+     END-EXEC.                                                 
+     EXEC SQL                                                       
+       INCLUDE TRANS                                                
+     END-EXEC.                                                      
+     EXEC SQL                                                       
+       INCLUDE SQLCA                                                
+     END-EXEC.                                                      
+     EXEC SQL                                                       
+      DECLARE TRANS_CUR CURSOR FOR                                  
+      SELECT ACC_NO FROM T16_ACCOUNT_TABLE A,                       
+      T16_TRANSACTION_TABLE T                                       
+      WHERE T16_ACCOUNT_TABLE.ACC_NO =                              
+      T16_TRANSACTION_TABLE.ACC_TR                                  
+      AND ACC_STAT = 'A'                                            
+     END-EXEC.                                                      
+  01  P-MESSAGE          PIC X(10)  VALUE SPACES.                   
+  01 WS-CNT             PIC 9(02)  VALUE ZERO.                      
+  01  HEADING-LINE.                                                 
+     03  FILLER           PIC X(06) VALUE 'ACCNO'.                  
+      03  FILLER           PIC X(01) VALUE SPACES.                       
+      03  FILLER           PIC X(02) VALUE 'CN'.                         
+      03  FILLER           PIC X(72) VALUE SPACES.                       
+   01  DETAIL-LINE.                                                      
+       03 ACC-NO-O        PIC X(06).                                     
+       03 FILLER          PIC X(01)        VALUE ' '.                    
+       03 WS-CNT-O        PIC 9(02).                                     
+       03 FILLER          PIC X(72) VALUE SPACES.                        
+   01  WS-REP-STAT         PIC X(02).                                    
+   01 WS-TABLE-FLAG        PIC X(01) VALUE 'N'.                          
+     88 END-OF-ROW    VALUE 'Y'.                                         
+   PROCEDURE DIVISION.                                                   
+    MAIN-PARA.                                                           
+      OPEN OUTPUT REPORT-FILE                                            
+        WRITE REPORT-RECORD FROM HEADING-LINE.                           
+        EXEC SQL                                                         
+         OPEN TRANS_CUR                                                  
+        END-EXEC                                                         
+       PERFORM 1000-INIT-PARA UNTIL END-OF-ROW                           
+       MOVE 'N' TO WS-TABLE-FLAG                                         
+       PERFORM 3000-END-PARA                                             
+       STOP RUN.                                                         
+    1000-INIT-PARA.                                                      
+      EXEC SQL                                                           
+         FETCH TRANS_CUR                                                 
+      INTO :ACC-NO                                                       
+      END-EXEC.                                                          
+       DISPLAY 'SELECT SQL = ', SQLCODE                                  
+       EVALUATE SQLCODE                                                  
+         WHEN ZERO                                                       
+          ADD 1 TO WS-CNT                                                
+          PERFORM MOVE-PARA                                              
+         WHEN 100                                                        
+           MOVE 'Y' TO WS-TABLE-FLAG                                     
+           PERFORM 3000-END-PARA                                         
+         WHEN -305                                                       
+           MOVE 'NULL INDICATOR' TO P-MESSAGE                
+         WHEN OTHER                                          
+           MOVE 'ERROR' TO P-MESSAGE                         
+        END-EVALUATE.                                        
+   MOVE-PARA.                                                
+        MOVE ACC-NO TO ACC-NO-O                              
+        MOVE WS-CNT   TO WS-CNT-O                            
+        PERFORM 2000-WRITE-PARA.                             
+    2000-WRITE-PARA.                                         
+        WRITE REPORT-RECORD FROM DETAIL-LINE.                
+    3000-END-PARA.                                           
+         EXEC SQL                                            
+         CLOSE TRANS_CUR                                     
+         END-EXEC                                            
+         CLOSE REPORT-FILE.                                  

@@ -1,0 +1,16 @@
+In SPUFI, do the following steps -
+1) Create a Backup Table = Tnn_EMPLOYEE_TABLE_BK
+   which has the same structure as Tnn_EMPLOYEE_TABLE
+2) Run the following SQL in SPUFI
+   INSERT INTO Tnn_EMPLOYEE_TABLE_BK
+   VALUES(SELECT * FROM Tnn_EMPLOYEE_TABLE);
+
+In your COBOL Program, write the following 2 SQLs in your INIT-PARA
+INIT-PARA.
+    EXEC SQL
+                DELETE FROM Tnn_EMPLOYEE_TABLE
+    END-EXEC
+    EXEC SQL
+                INSERT INTO Tnn_EMPLOYEE_TABLE
+                VALUES(SELECT * FROM Tnn_EMPLOYEE_TABLE_BK)
+    END-EXEC
