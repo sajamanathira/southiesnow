@@ -1,0 +1,12 @@
+MAIN-PARA.                                           
+    ACCEPT WS-INPUTS                                 
+    PERFORM  UNTIL  WS-INPUTS = 'XXXX'               
+       IF WS-A IS NUMERIC AND WS-B IS NUMERIC        
+          PERFORM PROCESS-PARA                       
+       ELSE                                          
+          DISPLAY 'INPUTS ARE NOT NUMERIC'           
+       END-IF                                        
+       ACCEPT WS-INPUTS                              
+    END-PERFORM.                                     
+    DISPLAY 'END OF DATA - PROGRAM ENDING. BYE BYE!!'
+    STOP RUN .                

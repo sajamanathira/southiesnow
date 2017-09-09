@@ -1,0 +1,15 @@
+  IDENTIFICATION DIVISION.                       
+  PROGRAM-ID. PROG09.                            
+  DATA DIVISION.                                 
+  WORKING-STORAGE SECTION.                       
+  01 DATE-6              PIC 9(06).              
+  01 DATE-8              PIC 9(08).              
+  01 WS-TIME             PIC 9(08).              
+  PROCEDURE DIVISION.                            
+      ACCEPT DATE-6 FROM DATE                    
+      ACCEPT DATE-8 FROM DATE YYYYMMDD           
+      ACCEPT WS-TIME   FROM TIME                 
+      DISPLAY 'CURRENT DATE1 ', DATE-6           
+      DISPLAY 'CURRENT DATE2 ', DATE-8           
+      DISPLAY 'TIME ', WS-TIME                   
+      STOP RUN.                                  

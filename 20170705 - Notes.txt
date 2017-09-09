@@ -100,4 +100,154 @@ AMOGH
 VAIDYA                                           
 /*                                               
 ====================================================================
-
+JCL for conditional execution of Steps using IF THEN ELSE ENDIF
+//USERIDC JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID               
+//*                                                        
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.SORTOUT,                    
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+// IF (RC EQ 0) THEN                                       
+//STEP020  EXEC PGM=SORT                                   
+//SORTIN   DD DSN=USERID.TEST.SORTIN1,DISP=SHR            
+//SORTOUT  DD DSN=&&TEMP1,                                 
+//            DISP=(NEW,PASS),                             
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+  SORT FIELDS=(1,5,CH,A)                                   
+/*                                                         
+// ENDIF                                                   
+// IF (RC EQ 0) THEN                                       
+//STEP030  EXEC PGM=SORT                                   
+//SORTIN   DD DSN=USERID.TEST.SORTIN2,DISP=SHR            
+//SORTOUT  DD DSN=&&TEMP2,                                 
+//            DISP=(NEW,PASS),                             
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+  SORT FIELDS=(1,5,CH,X)                                   
+/*                                                         
+// ENDIF
+// IF (STEP020.RC EQ 0 & STEP030.RC EQ 0) THEN      
+//STEP040  EXEC PGM=SORT                                   
+//SORTIN01 DD DSN=&&TEMP1,DISP=OLD                         
+//SORTIN02 DD DSN=&&TEMP2,DISP=OLD                         
+//SORTOUT  DD DSN=USERID.TEST.SORTOUT,                    
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+  MERGE FIELDS=(1,5,CH,D)                                  
+/*                                                         
+// ENDIF 
+++++++++
+//USERIDT JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID    
+//*                                             
+//STEP010  EXEC PGM=IDCAMS                      
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD *                                 
+   DELETE USERID.TEST.GDGBASE GDG PURGE      
+   DEFINE GDG(NAME(USERID.TEST.GDGBASE) -      
+          LIMIT(4) -                            
+          NOEMPTY -                             
+          SCRATCH)                              
+/*
+========================================
+NOEMPTY   = Uncatalogs the oldest generation
+EMPTY	  = Uncatalogs all the previous generation
+NOSCRATCH = Leaves the Uncataloged generations as is
+SCRATCH   = Deletes all the Uncataloged generations
++++++++++++++++++++++++++++++++++++++++++++++++++++
+JCL to copy contents of 1 PS File to new Generation of GDG
+//USERIDT JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID    
+//*                                             
+//STEP010  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.FILE1,DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+1),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
++++++++++++++++++++
+JCL to copy contents of 2 PS Files to 2 new Generations
+//USERIDT JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID    
+//*                                             
+//STEP010  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.FILE1,DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+1),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
+//*                                             
+//STEP020  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.FILE2,DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+2),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
++++++++++++++++++++
+JCL to copy contents of PS File in the following order -
+1) Copy File1 to New generation (+1)
+2) Copy File2 to Newer generation (+2)
+3) Copy Output of above 2 steps to a Newer generation (+3)
+//USERIDT JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID    
+//*                                             
+//STEP010  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.FILE1,DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+1),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
+//*                                             
+//STEP020  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.FILE2,DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+2),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
+//*                                             
+//STEP020  EXEC PGM=IEBGENER                    
+//SYSUT1   DD DSN=USERID.TEST.A.GDGBASE(+1),DISP=SHR   
+//         DD DSN=USERID.TEST.A.GDGBASE(+2),DISP=SHR   
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+3),   
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,  
+//         SPACE=(TRK,(1,1),RLSE),              
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000) 
+//SYSPRINT DD SYSOUT=*                          
+//SYSIN    DD DUMMY
++++++++++++++++++++
+JCL to concatenate the contents of latest generation (0) & earlier
+generation (-1) to a new generation (+1)
+//USERIDT JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),     
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID         
+//*                                                  
+//STEP010  EXEC PGM=IEBGENER                         
+//SYSUT1   DD DSN=USERID.TEST.A.GDGBASE(0),DISP=SHR 
+//         DD DSN=USERID.TEST.A.GDGBASE(-1),DISP=SHR
+//SYSUT2   DD DSN=USERID.TEST.A.GDGBASE(+1),        
+//         DISP=(NEW,CATLG,DELETE),UNIT=SYSDA,       
+//         SPACE=(TRK,(1,1),RLSE),                   
+//         DCB=(RECFM=FB,LRECL=50,BLKSIZE=5000)      
+//SYSPRINT DD SYSOUT=*                               
+//SYSIN    DD DUMMY                                  
++++++++++++++++++++++++++++++++++++++++++++++++++++

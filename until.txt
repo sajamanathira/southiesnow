@@ -1,0 +1,39 @@
+  IDENTIFICATION DIVISION.                                               
+  PROGRAM-ID. PROG08.                                                    
+  DATA DIVISION.                                                         
+  WORKING-STORAGE SECTION.                                               
+  01 WS-INPA             PIC 9(02).                                      
+  01 WS-INPB             PIC 9(02).                                      
+  01 WS-INPC             PIC 9(02).                                      
+  01 WS-INPD             PIC 9(02).                                      
+  01 WS-INPE             PIC 9(02).                                      
+  01 WS-INPF             PIC 9(02).                                      
+  01 WS-COUNTER          PIC 9(02).                                      
+  PROCEDURE DIVISION.                                                    
+      ACCEPT WS-INPA                                                     
+      ACCEPT WS-INPB                                                     
+      IF  WS-INPA IS NOT NUMERIC AND WS-INPB IS NOT NUMERIC              
+          DISPLAY ' SOMETHING WRONG '                                    
+      ELSE
+          MOVE 1 TO WS-COUNTER                               
+        PERFORM PROCESS-PARA UNTIL WS-COUNTER = 4          
+    END-IF                                                 
+    STOP RUN.                                              
+PROCESS-PARA.                                              
+    PERFORM PARA-ADD                                       
+    PERFORM PARA-SUB                                       
+    PERFORM PARA-MULT                                      
+    PERFORM PARA-DIV                                       
+    ADD 1 TO WS-COUNTER.                                   
+PARA-ADD.                                                  
+    ADD WS-INPA WS-INPB GIVING WS-INPC                     
+    DISPLAY 'ADDITION', WS-INPC.                           
+PARA-SUB.                                                  
+    SUBTRACT WS-INPA FROM WS-INPB GIVING WS-INPD           
+    DISPLAY 'SUBTRACTION', WS-INPD.                        
+PARA-MULT.                                                 
+    MULTIPLY WS-INPA BY WS-INPB GIVING WS-INPE             
+      DISPLAY 'MULTIPLY', WS-INPE.               
+PARA-DIV.                                      
+    DIVIDE WS-INPA BY WS-INPB GIVING WS-INPF   
+    DISPLAY 'DIV', WS-INPF.                                                                                 

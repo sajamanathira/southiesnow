@@ -1,0 +1,18 @@
+============================================================
+01  STATE-TABLE.
+    03  STATE-CODE OCCURS 20 TIMES.
+    05  CODE   PIC X(02).
+    05  NAME   PIC X(20).
+01  SUB        PIC 9(02).
+01  WS-CODE    PIC X(02).
+01  WS-NAME    PIC X(20) VALUE 'INVALID STATE CODE'.
+PROCEDURE DIVISION.
+    ACCEPT WS-CODE
+    PERFORM VARYING SUB FROM 1 BY 1 UNTIL SUB > 20
+    IF WS-CODE = CODE(SUB)
+       MOVE NAME(SUB) TO WS-NAME
+       ADD 20    TO SUB
+    END-IF
+    END-PERFORM
+    DISPLAY 'STATE NAME ', WS-NAME
+=====================================================

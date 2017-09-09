@@ -1,0 +1,16 @@
+  IDENTIFICATION DIVISION.                                        
+  PROGRAM-ID. PROG03.                                             
+  DATA DIVISION.                                                  
+  WORKING-STORAGE SECTION.                                        
+  01 WS-GROUP.                                                    
+        04  WS-GRP1.                                              
+            05  WS-F1  PIC X(10).                                 
+            05  WS-F2  PIC X(05).                                 
+        03  WS-GRP2.                                              
+            05  WS-F3  PIC X(05).                                 
+            05  WS-F4  PIC X(05).                                 
+        02  WS-F5      PIC X(05).                                 
+  PROCEDURE DIVISION.                                             
+      ACCEPT WS-GROUP                                             
+      DISPLAY WS-GROUP                                            
+      STOP RUN.                                                   
