@@ -1,0 +1,24 @@
+Member = PJCL1 in DSRP001.TEST.JCLLIB
+//DSRP001P JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=DSRP001    
+//PROCLIB  JCLLIB ORDER=(DSRP001.TEST.PROCLIB)  
+//*                                             
+//JSTEP010 EXEC PROC1                           
+//*
++++++++++++++++++++++
+Member = PROC1 in DSRP001.TEST.PROCLIB
+//PROC1    PROC                                            
+//*                                                        
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=DSRP001.TEST.ASV1,                       
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//PSTEP020 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=DSRP001.TEST.ASV1,                       
+//            DISP=(,CATLG,DELETE),                        
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//         PEND                                            
+//*

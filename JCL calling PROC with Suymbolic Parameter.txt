@@ -1,0 +1,23 @@
+//USERIDP JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1), 
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID     
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)   
+//*                                              
+//JSTEP010 EXEC PROC2,CITY=NEWDELHI              
+//JSTEP010 EXEC PROC2 CITY=CHENNAI               
+//JSTEP010 EXEC PROC2,CITY=KOLKATA               
+//JSTEP010 EXEC PROC2                            
+//JSTEP010 EXEC PROC2,CITY=NOIDA                 
+++++++++++++++++++++++++++++++++
+//PROC2    PROC CITY=INDIA                                 
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.&CITY,                    
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//PSTEP020 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.&CITY,                    
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//         PEND                                            
+//*

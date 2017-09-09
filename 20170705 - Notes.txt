@@ -1,0 +1,103 @@
+//STEP010 EXEC PGM=PROG1
+//FILE1   DD DSN=USERID.TEST.INFILE,DISP=OLD
+//FILE2   DD DSN=USERID.TEST.OUTFILE,DISP=(NEW,CATLG,DELETE)
+//*
+//STEP020 EXEC PGM=PROG2
+//FILE3   DD DSN=*.STEP010.FILE2,DISP=OLD
+==========================================
+//LKED EXEC PGM=HEWL,REGION=1024K,PARM='XREF,LIST’
+//SYSLIB DD DSNAME=CEE.SCEELKED,DISP=SHR
+//SYSPRINT DD SYSOUT=A
+//SYSLIN DD DSNAME=DSRC746.SATYA.OBJ(ADD1),DISP=
+//SYSLMOD DD DSNAME=DSRC746.SATYA.LOAD(ADD1),DISP
+//SYSUT1 DD UNIT=SYSDA,SPACE=(TRK,(10,10))
+//*
+//GO EXEC PGM=*.LKED.SYSLMOD
+//SYSPRINT DD SYSOUT=A
+//SYSOUT DD SYSOUT=A
+//SYSIN DD *
+10
+/*
+++++++++++++++++
+//GO       EXEC PGM=ADD1
+//STEPLIB  DD DSN=DSRC746.SATYA.OBJ,DISP=OLD
+//SYSPRINT DD SYSOUT=A
+//SYSOUT   DD SYSOUT=A
+//SYSIN    DD *
+10
+/*
+================================================================
+JCL using the INCLUDE Command
+//USERIDC JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID               
+//INCLIB   JCLLIB ORDER=(USERID.TEST.PROCLIB)             
+//*                                                        
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE3    DD DSN=USERID.TEST.FILEOUT,                    
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//STEP020  EXEC PGM=IEBGENER                               
+//SYSUT1   DD DSN=USERID.TEST.FILE1,DISP=SHR              
+//SYSUT2   DD DSN=USERID.TEST.FILEOUT,                    
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//INC1 INCLUDE MEMBER=COMMON                               
+++++++
+Contents of the COMMON Member
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSIN    DD DUMMY   
+==============================================================
+Compile JCL using SET to pass Value to Symbolic Parameters
+//USERIDC JOB ACCT#,CLASS=A,NOTIFY=USERID,MSGCLASS=X,MSGLEVEL=(1,1)
+//COMP     EXEC PGM=IGYCRCTL,REGION=2048K                            
+//*-------------------------------------------------                 
+// SET PROG=FIRSTPGM                                                 
+// SET SOURCE=USERID.TEST.PROGRAMS                                  
+// SET LOAD=USERID.TEST.LOADLIB                                     
+//*-------------------------------------------------                 
+//STEPLIB  DD  DSNAME=IGY.SIGYCOMP,DISP=SHR                          
+//SYSPRINT DD  SYSOUT=*                                              
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT2   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT3   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT4   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT5   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT6   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSUT7   DD  UNIT=SYSDA,SPACE=(CYL,(1,1))                          
+//SYSIN    DD  DSN=&SOURCE(&PROG),DISP=SHR                           
+//SYSLIN   DD  DSNAME=&&TEMP,DISP=(NEW,PASS),                        
+//             UNIT=SYSDA,SPACE=(TRK,(10,10))                   
+//LKED     EXEC PGM=HEWL,REGION=1024K,PARM=XREF,COND=(0,LT,COMP)
+//SYSLIB   DD  DSNAME=CEE.SCEELKED,DISP=SHR                     
+//SYSPRINT DD  SYSOUT=*                                         
+//SYSLIN   DD  DSNAME=&&TEMP,DISP=(OLD,DELETE)                  
+//SYSLMOD  DD  DSNAME=&LOAD(&PROG),DISP=SHR                     
+//SYSUT1   DD  UNIT=SYSDA,SPACE=(TRK,(10,10))                   
+//                                                              
+=====================================================================
+JCL to execute Multiple Programs using the JOBLIB Statement
+//JOBLIB   DD   DSN=USERID.TEST.LOADLIB,DISP=SHR
+//STEP10   EXEC PGM=FIRSTPGM                     
+//SYSOUT   DD   SYSOUT=*                         
+//SYSIN    DD   *                                
+AMOGH                                            
+VAIDYA                                           
+/*                                               
+//STEP20   EXEC PGM=SECPGM                       
+//SYSOUT   DD   SYSOUT=*                         
+//SYSIN    DD   *                                
+AMOGH                                            
+VAIDYA                                           
+/*                                               
+//STEP20   EXEC PGM=THIRDPGM                     
+//SYSOUT   DD   SYSOUT=*                         
+//SYSIN    DD   *                                
+AMOGH                                            
+VAIDYA                                           
+/*                                               
+====================================================================
+

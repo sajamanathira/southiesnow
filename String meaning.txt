@@ -1,0 +1,10 @@
+•	String Meaning
+P'=' Any character 
+P'¬' Any character that is not a blank 
+P'.' Any character that cannot be displayed 
+P'#' Any numeric character, 0-9 
+P'-' Any nonnumeric character 
+P'@' Any alphabetic character, uppercase or lowercase 
+P'<' Any lowercase alphabetic character 
+P'>' Any uppercase alphabetic character 
+P'$' Any special character, neither alphabetic nor numeric

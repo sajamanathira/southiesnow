@@ -1,0 +1,18 @@
+Member = PJCL5 in USERID.TEST.JCLLIB
+//USERIDP JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID    
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)  
+//*                                             
+//JSTEP010 EXEC PROC=COPYPROC                   
+//*                                             
+//PSTEP010.SYSUT2 DD DISP=MOD                   
+++++++++++
+Member = COPYPROC in USERID.TEST.PROCLIB
+//COPYPROC PROC                              
+//*                                          
+//PSTEP010 EXEC PGM=IEBGENER                 
+//SYSUT1   DD DSN=USERID.TEST.FILE1,DISP=OLD
+//SYSUT2   DD DSN=USERID.TEST.FILE3,DISP=OLD
+//SYSPRINT DD SYSOUT=*                       
+//SYSIN    DD DUMMY                          
+//         PEND         

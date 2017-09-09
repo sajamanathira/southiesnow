@@ -1,0 +1,27 @@
+This PROC has 2 Sumbolic Parameters – the last & 2nd last Qualifier
+
+//USERIDP JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1), 
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID     
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)   
+//*                                              
+//JSTEP010 EXEC PROC3,CITY=NEWDELHI,ZONE=NORTH   
+//JSTEP020 EXEC PROC3,CITY=CHENNAI,ZONE=SOUTH    
+//JSTEP030 EXEC PROC3,CITY=KOLKATA,ZONE=EAST     
+//JSTEP040 EXEC PROC3                            
+//JSTEP050 EXEC PROC3,CITY=PUNE,ZONE=WEST        
+//JSTEP060 EXEC PROC3,CITY=BHOPAL,ZONE=CENTRAL   
+++++++++
+//PROC3    PROC CITY=ALL,ZONE=INDIA                        
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.&ZONE..&CITY,             
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//PSTEP020 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.&ZONE..&CITY,             
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//         PEND                                            
+//*              

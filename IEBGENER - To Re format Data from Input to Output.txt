@@ -1,0 +1,30 @@
+//DSRP001C JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID               
+//*
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE3    DD DSN=DSRP001.TEST.FILE3,                      
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//STEP020  EXEC PGM=IEBGENER                               
+//SYSUT1   DD DSN=DSRP001.TEST.FILE1,DISP=OLD              
+//SYSUT2   DD DSN=DSRP001.TEST.FILE3,                      
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SYSPRINT DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+   GENERATE MAXFLDS=4      
+   RECORD FIELD=(5,16,,1), 
+          FIELD=(5,11,,6), 
+          FIELD=(5,6,,11), 
+          FIELD=(5,1,,16)  
+/*                         
+//                         
+//* INPUT DATA             
+----+----1----+----2----+--
+AAAA BBBB CCCC DDDD        
+//* OUTPUT DATA            
+----+----1----+----2----+--
+DDDD CCCC BBBB AAAA

@@ -1,0 +1,22 @@
+//DSRP001C JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),            
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID                
+//*                                                         
+//STEP010  EXEC PGM=IEFBR14                                 
+//FILE3    DD DSN=DSRP001.TEST.PDS2,                        
+//            DISP=(MOD,DELETE,DELETE),                     
+//            SPACE=(TRK,(1,1,1),RLSE),                     
+//            DCB=(LRECL=80,BLKSIZE=8000,RECFM=FB,DSORG=PO) 
+//*                                                         
+//STEP020  EXEC PGM=IEBCOPY                                 
+//INPDS    DD DSN=DSRP001.TEST.PDS1,DISP=OLD                
+//OUTPDS   DD DSN=DSRP001.TEST.PDS2,                        
+//            DISP=(NEW,CATLG,DELETE),                      
+//            SPACE=(TRK,(1,1,1),RLSE),                     
+//            DCB=(LRECL=80,BLKSIZE=8000,RECFM=FB,DSORG=PO) 
+//SYSPRINT DD SYSOUT=*                                      
+//* SELECT WILL COPY THE MEMBERS MENTIONED & RENAME THEM    
+//SYSIN    DD *                              
+  COPY INDD=INPDS,OUTDD=OUTPDS               
+  SELECT MEMBER=((ASV1,MEM1,R),(ASV2,MEM2,R))
+/*                                           
+//          

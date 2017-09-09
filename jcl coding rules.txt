@@ -1,0 +1,27 @@
+ID Field
+| JobName Field
+| |	   Operation Field
+| |	   |	Positional Parameters
+| |	   |	|		 Keyword Parameters
+| |	   |	|		 |
+//DSRP001T JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=DSRP001               
+//*                                                        
+	   Operation Field
+	   |    Keyword Parameters
+	   |	|
+//STEP010  EXEC PGM=IEFBR14                                
+	   Operation Field
+	   |    Keyword Parameters
+	   |	|
+//FILE2    DD DSN=DSRP001.TEST.FILE2,                      
+//            DISP=(MOD,CATLG,DELETE), - (Positional Parameters)                    
+//            SPACE=(TRK,(1,1),RLSE), - (Positional Parameters)                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*		   |
+		   Keyword Sub Parameters
++++++++++++++++++++++++++++++++++++++++++
+Cols  1 -  2 = ID Field
+Cols  3 - 10 = Name Field (Max 8 Characters, rule as Qualifier)
+Cols 12 - 15 = Operation Field
+Cols  4 - 16 = Parameter Field (Positional / Keyword)                                        

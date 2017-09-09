@@ -1,0 +1,15 @@
+//USERIDC JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),         
+//             MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID         
+//*                                                      
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)           
+//*                                                      
+//JSTEP1   EXEC PROC=PROCA,                              
+//             PARM.S1=(W,X,Y,Z),                        
+//             TIME.S1=(0,15),                           
+//             PARM.S2=PURCHASE,                         
+//             COND.S3=((4,LT),ONLY)                     
+//*                                                      
+//S1.D2    DD DSN=USERID.TEST.FILE7                     
+//S2.STEPLIB DD DSN=USERID.TEST.PROCLIB,DISP=SHR        
+//S2.OP1   DD VOL=SER=                                   
+//S3.DD3   DD DSN=USERID.TEST.FILEB,DISP=MOD            

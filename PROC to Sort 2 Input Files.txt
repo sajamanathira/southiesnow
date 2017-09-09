@@ -1,0 +1,26 @@
+Member = PJCL1 in USERID.TEST.JCLLIB
+//USERIDP JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),
+//        MSGCLASS=X,CLASS=A,NOTIFY=USERID    
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)  
+//JSTEP010 EXEC PROC=SPROC1
+++++++++++
+Member = PROC1 in USERID.TEST.PROCLIB
+//SPROC1   PROC                                            
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.SORTOUT,                    
+//            DISP=(MOD,DELETE,DELETE),SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//PSTEP020 EXEC PGM=SORT                                   
+//SORTIN   DD DSN=USERID.TEST.SORTIN1,DISP=OLD            
+//         DD DSN=USERID.TEST.SORTIN2,DISP=OLD            
+//SORTOUT  DD DSN=USERID.TEST.SORTOUT,                    
+//            DISP=(NEW,CATLG,DELETE),SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SORTWK01 DD SPACE=(CYL,(1,1),RLSE),UNIT=SYSDA            
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD DSN=USERID.TEST.PARMLIB(PSORT1),DISP=SHR    
+//         PEND                                            
++++++++++++
+Member = SPROC1 in USERID.TEST.PARMLIB
+  SORT FIELDS=(1,5,CH,A),EQUALS
+  SUM FIELDS=NONE    

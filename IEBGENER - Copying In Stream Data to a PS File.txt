@@ -1,0 +1,22 @@
+//DSRP001C JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1),           
+//         MSGCLASS=X,CLASS=A,NOTIFY=&SYSUID               
+//*                                                        
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE3    DD DSN=DSRP001.TEST.FILE3,                      
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//STEP020  EXEC PGM=IEBGENER                               
+//SYSUT1   DD *                                            
+INSTREAM - THIS IS RECORD 1                                
+INSTREAM - THIS IS RECORD 2                                
+INSTREAM - THIS IS RECORD 3                                
+INSTREAM - THIS IS RECORD 4                                
+/*                                                         
+//SYSUT2   DD DSN=DSRP001.TEST.FILE3,                      
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=80,BLKSIZE=8000,RECFM=FB,DSORG=PS)
+//SYSPRINT DD SYSOUT=*                                     
+//SYSIN    DD *              

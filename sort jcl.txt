@@ -1,0 +1,27 @@
+//STEP010  EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=DSRP001.TEST.SORTOUT,                    
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//*                                                        
+//STEP020  EXEC PGM=SORT                                   
+//SORTIN   DD DSN=DSRP001.TEST.SORTIN,DISP=OLD             
+//SORTOUT  DD DSN=DSRP001.TEST.SORTOUT,                    
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//SORTWK01 DD SPACE=(CYL,(1,1),RLSE),UNIT=SYSDA            
+//SYSOUT   DD SYSOUT=*                                     
+//SYSIN    DD *                                            
+  SORT FIELDS=(6,3,CH,A)                                   
+/*    
+asv  111 - this is line -1a
+asv  444 - this is line -4a
+asv  333 - this is line -3a
+asv  222 - this is line -2a
+asv  555 - this is line -5a
+asv  111 - this is line -1b
+asv  444 - this is line -4b
+asv  333 - this is line -3b
+asv  222 - this is line -2b
+asv  555 - this is line -5b                         

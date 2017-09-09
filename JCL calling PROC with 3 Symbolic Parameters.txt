@@ -1,0 +1,22 @@
+This PROC has 3 Symbolic Parameters – 1st two are part of a Qualifier Name while 3rd is the last Qualifier
+
+//USERIDP JOB ABCD,'CAP GEMINI',MSGLEVEL=(1,1), 
+//         MSGCLASS=X,CLASS=A,NOTIFY=USERID     
+//PROCLIB  JCLLIB ORDER=(USERID.TEST.PROCLIB)   
+//*                                              
+//JSTEP010 EXEC PROC4,YR=2017,MTH=JUL,CITY=PUNE  
+//JSTEP020 EXEC PROC4,YR=2017,MTH=AUG,CITY=MUMBAI
+++++++++
+//PROC4    PROC YR=2000,MTH=ALL,CITY=INDIA                 
+//PSTEP010 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.Y&YR.&MTH..&CITY,         
+//            DISP=(MOD,DELETE,DELETE),                    
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//PSTEP020 EXEC PGM=IEFBR14                                
+//FILE1    DD DSN=USERID.TEST.A.Y&YR.&MTH..&CITY,         
+//            DISP=(NEW,CATLG,DELETE),                     
+//            SPACE=(TRK,(1,1),RLSE),                      
+//            DCB=(LRECL=50,BLKSIZE=5000,RECFM=FB,DSORG=PS)
+//         PEND                                            
+//*                    
